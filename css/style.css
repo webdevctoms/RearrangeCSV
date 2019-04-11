@@ -6,3 +6,9 @@
 	text-align: center;
 	margin: auto;
 }
+#drop_zone {
+  border: 5px dashed grey;
+  width:  200px;
+  height: 200px;
+  margin:auto;
+}
