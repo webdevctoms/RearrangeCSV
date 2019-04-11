@@ -22,13 +22,36 @@ ReorderCSV.prototype.setEventListeners = function(){
 		e.preventDefault();
 	}.bind(this),false);
 }
+
+ReorderCSV.prototype.createCSV = function(arr){
+	let lineArray = [];
+	console.log(arr);
+	arr.forEach(function(rowArr,index){
+		let row = rowArr.join("");
+		lineArray.push(index == 0 ? "data:text/csv;charset=utf-8," + row:row);	
+		//lineArray.push(row);
+	});
+	let csvContent = lineArray.join("\n");
+	let encodedUri = encodeURI(csvContent);
+	console.log(csvContent);
+	return encodedUri
+}
+
+ReorderCSV.prototype.createDownload = function(csvData){
+	let downloadLink = document.getElementById("downloadLink");
+	downloadLink.classList.remove("hide");
+	downloadLink.setAttribute("href",csvData);
+	downloadLink.setAttribute("download", "new_data.csv");
+}
+
 //not capturing last column, guess just add it manually
 ReorderCSV.prototype.splitByCommas = function(newLineArr){
 	//const commaRegex = /\"*(.*?)(?:\"*\,)/g;
 	const commaRegex = /\"(.*?)(?<!\")(?:\"\,)|\"(.*?)(?:\"{3}\,)|(.*?)(?:\,)/g;
 	let commaSplitArr = [];
 	for(let i = 0;i < newLineArr.length;i++){
-		let sanitizedString = newLineArr[i].replace(/\"{3}/g,'"');
+		//issues with matching 3 " so just remove any cases of 3 "
+		let sanitizedString = newLineArr[i].replace(/\"{3}/g,'"').replace(/\#/g,"");
 		let rowMatches = sanitizedString.match(commaRegex);
 		commaSplitArr.push(rowMatches);		
 	}
@@ -47,6 +70,8 @@ ReorderCSV.prototype.readFile = function(){
 		//console.log(newLineSplitFile);
 		let commaSplitArr = this.splitByCommas(newLineSplitFile);
 		console.log(commaSplitArr);
+		let csvData = this.createCSV(commaSplitArr);
+		this.createDownload(csvData);
 		
 	}.bind(this);
 
