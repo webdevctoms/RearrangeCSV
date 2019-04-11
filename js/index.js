@@ -4,7 +4,6 @@ function ReorderCSV(fileInputId,dropAreaId){
 	//the raw file data
 	this.csvFile;
 	this.csvArray = [];
-	console.log(this.dropArea);
 	this.setEventListeners();
 }
 
@@ -23,13 +22,32 @@ ReorderCSV.prototype.setEventListeners = function(){
 		e.preventDefault();
 	}.bind(this),false);
 }
+//not capturing last column, guess just add it manually
+ReorderCSV.prototype.splitByCommas = function(newLineArr){
+	//const commaRegex = /\"*(.*?)(?:\"*\,)/g;
+	const commaRegex = /\"(.*?)(?<!\")(?:\"\,)|\"(.*?)(?:\"{3}\,)|(.*?)(?:\,)/g;
+	let commaSplitArr = [];
+	for(let i = 0;i < newLineArr.length;i++){
+		let sanitizedString = newLineArr[i].replace(/\"{3}/g,'"');
+		let rowMatches = sanitizedString.match(commaRegex);
+		commaSplitArr.push(rowMatches);		
+	}
+
+	commaSplitArr.pop();
+	Tests.checkSplitLengths(commaSplitArr,commaSplitArr[0].length);
+	return commaSplitArr;
+}
 
 ReorderCSV.prototype.readFile = function(){
 	let reader = new FileReader()
 
 	reader.onload = function(event){
 		let fileString = event.target.result;
-		console.log(this.csvFile,fileString);
+		let newLineSplitFile = fileString.split("\n");
+		//console.log(newLineSplitFile);
+		let commaSplitArr = this.splitByCommas(newLineSplitFile);
+		console.log(commaSplitArr);
+		
 	}.bind(this);
 
 	reader.readAsText(this.csvFile)
@@ -38,16 +56,13 @@ ReorderCSV.prototype.readFile = function(){
 ReorderCSV.prototype.fileUploaded = function(event){
 	event.preventDefault();	
 	this.csvFile = event.target.files[0];
-	console.log("file",this.csvFile);
 	this.readFile();
 }
 
 ReorderCSV.prototype.fileDropped = function(event){
 	
 	event.preventDefault();
-	console.log("files");
 	this.csvFile = event.dataTransfer.items[0].getAsFile();
-	console.log("file",this.csvFile);
 	this.readFile();
 }
 
