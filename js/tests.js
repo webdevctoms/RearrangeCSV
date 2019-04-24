@@ -1,5 +1,6 @@
 Tests = {
-	checkSplitLengths:checkLength
+	checkLength,
+	checkKeys
 };
 
 function checkLength(arr,arrLength){
@@ -22,4 +23,8 @@ function checkLength(arr,arrLength){
 	if(incorrectIndexes.length === 0){
 		console.log("Length test passed");
 	}
+}
+
+function checkKeys(arr){
+	console.log("checking keys");
 }

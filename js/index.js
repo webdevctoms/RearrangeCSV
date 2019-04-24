@@ -5,6 +5,7 @@ function ReorderCSV(fileInputId,dropAreaId,testButtonID){
 	//the raw file data
 	this.csvFile;
 	this.commaSplitArr = [];
+	this.reorderedArray = [];
 	this.setEventListeners();
 }
 
@@ -26,13 +27,15 @@ ReorderCSV.prototype.setEventListeners = function(){
 	this.testButton.addEventListener("click",function(e){
 		e.preventDefault();
 		this.runTests(e);
-	}.bind(this),false)
+	}.bind(this),false);
 
 }
 
 ReorderCSV.prototype.runTests = function(event){
 	try{
-		Tests.checkSplitLengths(this.commaSplitArr,this.commaSplitArr[0].length);
+		//check length after comma splitting data
+		Tests.checkLength(this.commaSplitArr,this.commaSplitArr[0].length);
+		Tests.checkKeys(this.reorderedArray);
 	}
 	catch(err){
 		console.log("error testing ",err);
@@ -50,7 +53,7 @@ ReorderCSV.prototype.createCSV = function(arr){
 	});
 	let csvContent = lineArray.join("\n");
 	let encodedUri = encodeURI(csvContent);
-	console.log(csvContent);
+	//console.log(csvContent);
 	return encodedUri
 }
 
@@ -59,6 +62,28 @@ ReorderCSV.prototype.createDownload = function(csvData){
 	downloadLink.classList.remove("hide");
 	downloadLink.setAttribute("href",csvData);
 	downloadLink.setAttribute("download", "new_data.csv");
+}
+
+ReorderCSV.prototype.reorderColumns = function(commaSplitArr){
+	let reorderedArray = [];
+	for(let i = 0;i < commaSplitArr.length;i++){
+		let rowArray = commaSplitArr[i];
+		if(i !== 0){
+			for(let k = 0;k < commaSplitArr[i].length; k++){
+				if(variantProductMap[k] && commaSplitArr[i][k] !== ","){
+					if(i === 426) {console.log(commaSplitArr[i][k],k,variantProductMap[k]);}
+					commaSplitArr[i][variantProductMap[k]] = commaSplitArr[i][k];
+					commaSplitArr[i][k] = ",";
+					
+				}
+			}
+
+			rowArray = commaSplitArr[i];
+		}
+		reorderedArray.push(rowArray);
+	}
+	console.log("reorderd array: ",reorderedArray);
+	return reorderedArray;
 }
 
 //not capturing last column, guess just add it manually
@@ -87,6 +112,9 @@ ReorderCSV.prototype.readFile = function(){
 		//console.log(newLineSplitFile);
 		this.commaSplitArr = this.splitByCommas(newLineSplitFile);
 		console.log(this.commaSplitArr);
+		
+		this.reorderedArray = this.reorderColumns(this.commaSplitArr);
+
 		let csvData = this.createCSV(this.commaSplitArr);
 		this.createDownload(csvData);
 		

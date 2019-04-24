@@ -1,4 +1,4 @@
-variantProductMap = {
+let variantProductMap = {
 	//torque nut size => size
 	7:91,
 	//Alloy Offset  => size
