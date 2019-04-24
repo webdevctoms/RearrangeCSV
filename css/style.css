@@ -11,4 +11,9 @@
   width:  400px;
   height: 400px;
   margin:auto;
+  margin-bottom: 20px;
+}
+
+div{
+	padding: 5px;
 }
