@@ -71,7 +71,7 @@ ReorderCSV.prototype.reorderColumns = function(commaSplitArr){
 		if(i !== 0){
 			for(let k = 0;k < commaSplitArr[i].length; k++){
 				if(variantProductMap[k] && commaSplitArr[i][k] !== ","){
-					if(i === 426) {console.log(commaSplitArr[i][k],k,variantProductMap[k]);}
+					if(commaSplitArr[i][variantProductMap[k]] !== ",") {console.log("two sets of data",commaSplitArr[i][k],i,k,variantProductMap[k]);}
 					commaSplitArr[i][variantProductMap[k]] = commaSplitArr[i][k];
 					commaSplitArr[i][k] = ",";
 					

@@ -27,6 +27,8 @@ let variantProductMap = {
 	31:91,
 	//ECBD matrix size => size
 	34:91,
+	//emt shear colors => color
+	35:22,
 	//encompass group colours => color
 	36:22,
 	//dmm size => size
@@ -66,7 +68,7 @@ let variantProductMap = {
 	//sterling rope sizes 6mm => size
 	81:91,
 	//t-shirt color => color
-	82:91,
+	82:22,
 	//torque nut sizes => size
 	83:91,
 	//swivel size => size
