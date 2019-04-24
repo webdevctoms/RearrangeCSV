@@ -1,9 +1,10 @@
-function ReorderCSV(fileInputId,dropAreaId){
+function ReorderCSV(fileInputId,dropAreaId,testButtonID){
 	this.fileInput = document.getElementById(fileInputId);
 	this.dropArea = document.getElementById(dropAreaId);
+	this.testButton = document.getElementById(testButtonID);
 	//the raw file data
 	this.csvFile;
-	this.csvArray = [];
+	this.commaSplitArr = [];
 	this.setEventListeners();
 }
 
@@ -21,11 +22,27 @@ ReorderCSV.prototype.setEventListeners = function(){
 	this.dropArea.addEventListener("dragover",function(e){
 		e.preventDefault();
 	}.bind(this),false);
+
+	this.testButton.addEventListener("click",function(e){
+		e.preventDefault();
+		this.runTests(e);
+	}.bind(this),false)
+
 }
+
+ReorderCSV.prototype.runTests = function(event){
+	try{
+		Tests.checkSplitLengths(this.commaSplitArr,this.commaSplitArr[0].length);
+	}
+	catch(err){
+		console.log("error testing ",err);
+	}
+	
+} 
 
 ReorderCSV.prototype.createCSV = function(arr){
 	let lineArray = [];
-	console.log(arr);
+	//console.log(arr);
 	arr.forEach(function(rowArr,index){
 		let row = rowArr.join("");
 		lineArray.push(index == 0 ? "data:text/csv;charset=utf-8," + row:row);	
@@ -57,7 +74,7 @@ ReorderCSV.prototype.splitByCommas = function(newLineArr){
 	}
 
 	commaSplitArr.pop();
-	Tests.checkSplitLengths(commaSplitArr,commaSplitArr[0].length);
+	
 	return commaSplitArr;
 }
 
@@ -68,9 +85,9 @@ ReorderCSV.prototype.readFile = function(){
 		let fileString = event.target.result;
 		let newLineSplitFile = fileString.split("\n");
 		//console.log(newLineSplitFile);
-		let commaSplitArr = this.splitByCommas(newLineSplitFile);
-		console.log(commaSplitArr);
-		let csvData = this.createCSV(commaSplitArr);
+		this.commaSplitArr = this.splitByCommas(newLineSplitFile);
+		console.log(this.commaSplitArr);
+		let csvData = this.createCSV(this.commaSplitArr);
 		this.createDownload(csvData);
 		
 	}.bind(this);
@@ -92,7 +109,7 @@ ReorderCSV.prototype.fileDropped = function(event){
 }
 
 function initCSVReorder(){
-	let converter = new ReorderCSV("inputFile","drop_zone")
+	let converter = new ReorderCSV("inputFile","drop_zone","testData");
 }
 
 window.onload = initCSVReorder;
