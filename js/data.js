@@ -7,8 +7,8 @@ let variantProductMap = {
 	9:22,
 	//apparel pant length 2 => apparel pant length
 	11:10,
-	//apparel pant length => size apparel pant length is actually waist size
-	10:91,
+	//apparel pant length => waist size apparel pant length is actually waist size
+	10:65,
 	//apparel shirt size => size
 	12:91,
 	//apparel size/length => size
