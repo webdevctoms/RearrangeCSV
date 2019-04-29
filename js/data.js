@@ -1,12 +1,14 @@
 let variantProductMap = {
-	//torque nut size => size
-	7:91,
+	//torque nut size => size data in torque nut sizes actually colour
+	7:22,
 	//Alloy Offset  => size
 	8:91,
 	//apparel color => color
 	9:22,
 	//apparel pant length 2 => apparel pant length
 	11:10,
+	//apparel pant length => size apparel pant length is actually waist size
+	10:91,
 	//apparel shirt size => size
 	12:91,
 	//apparel size/length => size

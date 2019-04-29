@@ -63,16 +63,70 @@ ReorderCSV.prototype.createDownload = function(csvData){
 	downloadLink.setAttribute("href",csvData);
 	downloadLink.setAttribute("download", "new_data.csv");
 }
+//return fixed sub string
+ReorderCSV.prototype.fixItemCodeSubString = function(subString,index){
+	
+}
+
+ReorderCSV.prototype.fixItemCodes = function(itemCode){
+	//2 digits will represent waist size and 2 letters length of pant
+	//fix waist size mixed with pant length 
+	//eg 50000-BK-42R
+	//eg 28-xl or 28-l
+	let newItemCode = itemCode;
+	const twoDigitPattern = /\d{2}\w{2}|\d{2}\w{1}/i;
+	//these should be 2xl etc and the last digit should be length
+	//fix shirt size mixed with length with only 1 digit
+	//eg 50025-RG-2XLL
+	//eg 2xl-r
+	const oneDigitPattern = /\d{1}\w{3}/i;
+	//50001-MC-2XR  need pattern for these?
+
+	//these should be XL plus length
+	//fix shirt size mixed with length with no digits
+	//50001-BK-LGL
+	//eg xl-l
+	const threeLetterPattern = /[XLRSMDG]{1}[XLRSMDG]{1}[XLRS]{1}/;
+	let spliceIndex = 0;
+	let splitItemCode = itemCode.split("-");
+	switch(itemCode){
+		case twoDigitPattern.test(itemCode):
+			let subString = splitItemCode[splitItemCode.length - 1];
+			spliceIndex = 2;
+			break;
+
+		case oneDigitPattern.test(itemCode):
+			spliceIndex = 3;
+			let subString = splitItemCode[splitItemCode.length - 1];
+			break;
+
+		case threeLetterPattern.test(itemCode):
+			spliceIndex = 2;
+			let subString = splitItemCode[splitItemCode.length - 1];
+			break;	
+	}
+
+	return newItemCode;
+
+}
 
 ReorderCSV.prototype.reorderColumns = function(commaSplitArr){
 	let reorderedArray = [];
+	//i = rows
 	for(let i = 0;i < commaSplitArr.length;i++){
 		let rowArray = commaSplitArr[i];
 		if(i !== 0){
+			//k = columns
 			for(let k = 0;k < commaSplitArr[i].length; k++){
+
 				if(variantProductMap[k] && commaSplitArr[i][k] !== ","){
+
+					//11 and 10 means a waist size under pant length
 					if(commaSplitArr[i][variantProductMap[k]] !== ",") {console.log("two sets of data",commaSplitArr[i][k],i,k,variantProductMap[k]);}
-					commaSplitArr[i][variantProductMap[k]] = commaSplitArr[i][k];
+					let destinationIndex = variantProductMap[k];
+					//move datat to the new locations
+					commaSplitArr[i][destinationIndex] = commaSplitArr[i][k];
+					//set old data location to nothing
 					commaSplitArr[i][k] = ",";
 					
 				}
