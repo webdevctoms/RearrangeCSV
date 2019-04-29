@@ -36,6 +36,7 @@ ReorderCSV.prototype.runTests = function(event){
 		//check length after comma splitting data
 		Tests.checkLength(this.commaSplitArr,this.commaSplitArr[0].length);
 		Tests.checkKeys(this.reorderedArray);
+		Tests.checkCryeCodes(this.reorderedArray);
 	}
 	catch(err){
 		console.log("error testing ",err);
