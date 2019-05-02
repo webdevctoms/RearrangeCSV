@@ -1,14 +1,16 @@
-function ReorderCSV(fileInputId,dropAreaId,testButtonID,deleteButtonID){
+function ReorderCSV(fileInputId,dropAreaId,testButtonID,deleteButtonID,dropAreaItemCodesID,filterItemCodesID){
 	this.fileInput = document.getElementById(fileInputId);
 	this.dropArea = document.getElementById(dropAreaId);
 	this.testButton = document.getElementById(testButtonID);
 	this.deleteButton = document.getElementById(deleteButtonID);
+	this.filterItemButton = document.getElementById(filterItemCodesID);
 	//the raw file data
 	this.csvFile;
 	this.commaSplitArr = [];
 	this.reorderedArray = [];
 	//array with columns removed
 	this.trimmedArray = [];
+	this.filterItemCodes = new FilterItemCodes(dropAreaItemCodesID);
 	this.setEventListeners();
 }
 
@@ -35,6 +37,11 @@ ReorderCSV.prototype.setEventListeners = function(){
 	this.deleteButton.addEventListener("click",function(e){
 		e.preventDefault();
 		this.deletePressed(e);
+	}.bind(this),false);
+
+	this.filterItemButton.addEventListener("click",function(e){
+		e.preventDefault();
+		this.filterClicked(e);
 	}.bind(this),false);
 
 }
@@ -70,6 +77,7 @@ ReorderCSV.prototype.createCSV = function(arr){
 ReorderCSV.prototype.createDownload = function(csvData){
 	let downloadLink = document.getElementById("downloadLink");
 	downloadLink.classList.remove("hide");
+	downloadLink.setAttribute("href","");
 	downloadLink.setAttribute("href",csvData);
 	downloadLink.setAttribute("download", "new_data.csv");
 }
@@ -129,6 +137,22 @@ ReorderCSV.prototype.fixItemCodesCrye = function(itemCode,vendor){
 	return newItemCode;
 }
 
+ReorderCSV.prototype.filterClicked = function(event){
+	console.log("filter clicked");
+	//this.filterByItemCodes()
+	if(this.trimmedArray.length > 0){
+		this.itemCodeFilteredArray = this.filterItemCodes.filterByItemCodes(this.trimmedArray);
+	}
+	else if(this.reorderedArray.length > 0){
+		this.itemCodeFilteredArray = this.filterItemCodes.filterByItemCodes(this.reorderedArray);
+	}
+	else{
+		return;
+	}
+
+	console.log(this.itemCodeFilteredArray);
+	
+}
 
 ReorderCSV.prototype.deleteColumns = function(reorderedArray){
 	let trimmedArray = [];
@@ -150,7 +174,11 @@ ReorderCSV.prototype.deleteColumns = function(reorderedArray){
 
 ReorderCSV.prototype.deletePressed = function(event){
 	console.log("delete pressed",this.reorderedArray);
-	this.deleteColumns(this.reorderedArray);
+	this.trimmedArray = this.deleteColumns(this.reorderedArray);
+
+	let csvData = this.createCSV(this.trimmedArray);
+	this.createDownload(csvData);
+
 }
 
 ReorderCSV.prototype.reorderColumns = function(commaSplitArr){
@@ -216,7 +244,7 @@ ReorderCSV.prototype.readFile = function(){
 		
 		this.reorderedArray = this.reorderColumns(this.commaSplitArr);
 
-		let csvData = this.createCSV(this.commaSplitArr);
+		let csvData = this.createCSV(this.reorderedArray);
 		this.createDownload(csvData);
 		
 	}.bind(this);
@@ -238,7 +266,8 @@ ReorderCSV.prototype.fileDropped = function(event){
 }
 
 function initCSVReorder(){
-	let converter = new ReorderCSV("inputFile","drop_zone","testData","deleteData");
+	let converter = new ReorderCSV("inputFile","drop_zone","testData","deleteData","drop_zone_item_codes","removeItemCodes");
+	//let filterItemCodes = new FilterItemCodes(dropAreaItemCodesID);
 }
 
 window.onload = initCSVReorder;

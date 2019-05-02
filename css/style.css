@@ -6,7 +6,7 @@
 	text-align: center;
 	margin: auto;
 }
-#drop_zone {
+.drop_zone {
   border: 5px dashed grey;
   width:  500px;
   height: 500px;
@@ -16,4 +16,5 @@
 
 div{
 	padding: 5px;
+	margin:5px;
 }

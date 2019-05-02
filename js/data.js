@@ -125,5 +125,7 @@ let removeColumnsMap = {
 	//remove upc code
 	85:85,
 	//remove ml
+	89:89,
+	//remove swivel sizes
 	90:90,
 }

@@ -4,6 +4,7 @@
 	<title></title>
 	<script type="text/javascript" src="js/data.js"></script>
 	<script type="text/javascript" src="js/tests.js"></script>
+	<script type="text/javascript" src="js/itemCodeFilter.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
@@ -16,8 +17,8 @@
 			<input type="file" id="inputFile" accepts=".csv" />
 		</div>
 		<p>Or</p>
-		<div id="drop_zone">
-		  <p>Drag one or more files to this Drop Zone ...</p>
+		<div class="drop_zone" id="drop_zone">
+		  <p>Drop Master CSV Here</p>
 		</div>
 		<div>
 			<label for="testData">Test Data</label>
@@ -26,12 +27,23 @@
 			<button id="testData">Start</button>
 		</div>
 		<div>
-			<label for="testData">Remove reorderd columns</label>
+			<label for="deleteData">Remove reorderd columns</label>
 		</div>
 		<div>
 			<button id="deleteData">Remove</button>
 		</div>
-		<a id="downloadLink" class="hide">Download CSV</a>
+		<div>
+			<label for="removeItemCodes">Remove by item codes</label>
+		</div>
+		<div class="drop_zone" id="drop_zone_item_codes">
+		  <p>Drop item code CSV Here</p>
+		</div>
+		<div>
+			<button id="removeItemCodes">Remove Item Codes</button>
+		</div>
+		<div>
+			<a id="downloadLink" class="hide">Download CSV</a>
+		</div>
 	</div>
 </body>
 </html>
