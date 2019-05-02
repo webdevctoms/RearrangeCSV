@@ -21,7 +21,7 @@ FilterItemCodes.prototype.setEventListeners = function() {
 
 FilterItemCodes.prototype.assignItemCodes = function(itemCodesArray){
 	for(let i = 0;i < itemCodesArray.length;i++){
-		this.itemCodes[itemCodesArray[i]] = String(itemCodesArray[i]);
+		this.itemCodes[itemCodesArray[i]] = itemCodesArray[i];
 	}
 }
 
@@ -40,10 +40,35 @@ FilterItemCodes.prototype.removeBlanks = function(newLineArray){
 FilterItemCodes.prototype.filterByItemCodes = function(arr){
  	let filteredArray = [];
  	if(Object.keys(this.itemCodes).length > 0){
+ 		for(let i = 0;i < arr.length; i++){
+ 			let splitItem;
+ 			let commaRemovedString = arr[i][0].replace(",","");
+ 			//console.log(arr[i]);
+			if(i === 0){
+				filteredArray.push(arr[i])
+			}
 
+			if(this.itemCodes[commaRemovedString + "\r"]){
+				filteredArray.push(arr[i]);
+				continue;
+			}
+			splitItem = arr[i][0].split("-");
+			if(splitItem[0].length <= 1){
+				if(this.itemCodes[splitItem[1].replace(",","") + "\r"]){
+					filteredArray.push(arr[i]);
+					continue;
+				}
+			}
+			else if(splitItem[0].length > 1){
+				if(this.itemCodes[splitItem[0] + "\r"]){
+					filteredArray.push(arr[i]);
+					continue;
+				}
+			}
+		}
+ 		return filteredArray;
  	}
  	else{
- 		
  		return filteredArray;
  	}
  	return filteredArray;

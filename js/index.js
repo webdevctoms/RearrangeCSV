@@ -1,9 +1,10 @@
-function ReorderCSV(fileInputId,dropAreaId,testButtonID,deleteButtonID,dropAreaItemCodesID,filterItemCodesID){
+function ReorderCSV(fileInputId,dropAreaId,testButtonID,deleteButtonID,dropAreaItemCodesID,filterItemCodesID,reorderID){
 	this.fileInput = document.getElementById(fileInputId);
 	this.dropArea = document.getElementById(dropAreaId);
 	this.testButton = document.getElementById(testButtonID);
 	this.deleteButton = document.getElementById(deleteButtonID);
 	this.filterItemButton = document.getElementById(filterItemCodesID);
+	this.reorderButton = document.getElementById(reorderID);
 	//the raw file data
 	this.csvFile;
 	this.commaSplitArr = [];
@@ -42,6 +43,11 @@ ReorderCSV.prototype.setEventListeners = function(){
 	this.filterItemButton.addEventListener("click",function(e){
 		e.preventDefault();
 		this.filterClicked(e);
+	}.bind(this),false);
+
+	this.reorderButton.addEventListener("click",function(e){
+		e.preventDefault();
+		this.reorderClicked(e);
 	}.bind(this),false);
 
 }
@@ -151,6 +157,9 @@ ReorderCSV.prototype.filterClicked = function(event){
 	}
 
 	console.log(this.itemCodeFilteredArray);
+
+	let csvData = this.createCSV(this.itemCodeFilteredArray);
+	this.createDownload(csvData);
 	
 }
 
@@ -173,7 +182,7 @@ ReorderCSV.prototype.deleteColumns = function(reorderedArray){
 }
 
 ReorderCSV.prototype.deletePressed = function(event){
-	console.log("delete pressed",this.reorderedArray);
+	//console.log("delete pressed",this.reorderedArray);
 	this.trimmedArray = this.deleteColumns(this.reorderedArray);
 
 	let csvData = this.createCSV(this.trimmedArray);
@@ -232,6 +241,13 @@ ReorderCSV.prototype.splitByCommas = function(newLineArr){
 	return commaSplitArr;
 }
 
+ReorderCSV.prototype.reorderClicked = function(){
+	this.reorderedArray = this.reorderColumns(this.commaSplitArr);
+
+	let csvData = this.createCSV(this.reorderedArray);
+	this.createDownload(csvData);
+}
+
 ReorderCSV.prototype.readFile = function(){
 	let reader = new FileReader()
 
@@ -241,11 +257,8 @@ ReorderCSV.prototype.readFile = function(){
 		//console.log(newLineSplitFile);
 		this.commaSplitArr = this.splitByCommas(newLineSplitFile);
 		console.log(this.commaSplitArr);
+		this.reorderedArray = this.commaSplitArr;
 		
-		this.reorderedArray = this.reorderColumns(this.commaSplitArr);
-
-		let csvData = this.createCSV(this.reorderedArray);
-		this.createDownload(csvData);
 		
 	}.bind(this);
 
@@ -266,7 +279,7 @@ ReorderCSV.prototype.fileDropped = function(event){
 }
 
 function initCSVReorder(){
-	let converter = new ReorderCSV("inputFile","drop_zone","testData","deleteData","drop_zone_item_codes","removeItemCodes");
+	let converter = new ReorderCSV("inputFile","drop_zone","testData","deleteData","drop_zone_item_codes","removeItemCodes","reorderData");
 	//let filterItemCodes = new FilterItemCodes(dropAreaItemCodesID);
 }
 
