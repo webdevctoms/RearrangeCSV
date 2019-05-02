@@ -1,11 +1,14 @@
-function ReorderCSV(fileInputId,dropAreaId,testButtonID){
+function ReorderCSV(fileInputId,dropAreaId,testButtonID,deleteButtonID){
 	this.fileInput = document.getElementById(fileInputId);
 	this.dropArea = document.getElementById(dropAreaId);
 	this.testButton = document.getElementById(testButtonID);
+	this.deleteButton = document.getElementById(deleteButtonID);
 	//the raw file data
 	this.csvFile;
 	this.commaSplitArr = [];
 	this.reorderedArray = [];
+	//array with columns removed
+	this.trimmedArray = [];
 	this.setEventListeners();
 }
 
@@ -29,6 +32,11 @@ ReorderCSV.prototype.setEventListeners = function(){
 		this.runTests(e);
 	}.bind(this),false);
 
+	this.deleteButton.addEventListener("click",function(e){
+		e.preventDefault();
+		this.deletePressed(e);
+	}.bind(this),false);
+
 }
 
 ReorderCSV.prototype.runTests = function(event){
@@ -37,6 +45,7 @@ ReorderCSV.prototype.runTests = function(event){
 		Tests.checkLength(this.commaSplitArr,this.commaSplitArr[0].length);
 		Tests.checkKeys(this.reorderedArray);
 		Tests.checkCryeCodes(this.reorderedArray);
+		Tests.checkLength(this.trimmedArray,this.trimmedArray.length);
 	}
 	catch(err){
 		console.log("error testing ",err);
@@ -71,7 +80,7 @@ ReorderCSV.prototype.fixItemCodeSubString = function(subString,index){
 	return splitItem.join("");
 }
 //only fix crye item codes for now
-ReorderCSV.prototype.fixItemCodes = function(itemCode,vendor){
+ReorderCSV.prototype.fixItemCodesCrye = function(itemCode,vendor){
 	//2 digits will represent waist size and 2 letters length of pant
 	//fix waist size mixed with pant length 
 	//eg 50000-BK-42R
@@ -85,7 +94,7 @@ ReorderCSV.prototype.fixItemCodes = function(itemCode,vendor){
 	//eg 2xl-r
 	const oneDigitPattern = /\d{1}[a-zA-Z]{3}/;
 	//50001-MC-2XR  need pattern for these?
-
+	const oneDigitPattern2 = /\d{1}[a-zA-Z]{2}/;
 	//these should be XL plus length
 	//fix shirt size mixed with length with no digits
 	//50001-BK-LGL
@@ -99,29 +108,49 @@ ReorderCSV.prototype.fixItemCodes = function(itemCode,vendor){
 		spliceIndex = 2;
 		newSubString = this.fixItemCodeSubString(subString,spliceIndex);
 		splitItemCode[splitItemCode.length - 1] = newSubString;
-		//splitItemCode.pop();
-		//console.log("new sub string",newSubString,itemCode)
+
 	}				
 		
 	else if(oneDigitPattern.test(itemCode) && cryePattern.test(vendor)){
 		spliceIndex = 3;
 		newSubString = this.fixItemCodeSubString(subString,spliceIndex);
 		splitItemCode[splitItemCode.length - 1] = newSubString;
-		//console.log("new sub string",newSubString,itemCode)
-		//splitItemCode.pop();
+		
 	}
 
 	else if(threeLetterPattern.test(itemCode) && cryePattern.test(vendor)){
 		spliceIndex = 2;
 		newSubString = this.fixItemCodeSubString(subString,spliceIndex);
 		splitItemCode[splitItemCode.length - 1] = newSubString;
-		//console.log("new sub string",newSubString,itemCode)
-		//splitItemCode.pop();
+		
 	}		
 
 	newItemCode = splitItemCode.join("-");
 	return newItemCode;
+}
 
+
+ReorderCSV.prototype.deleteColumns = function(reorderedArray){
+	let trimmedArray = [];
+	
+	for(let i = 0;i < reorderedArray.length;i++){
+		let rowArray = []
+		
+		for(let k = 0;k < reorderedArray[i].length;k++){
+			if(!variantProductMap[k] && !removeColumnsMap[k]){
+				rowArray.push(reorderedArray[i][k]);
+			}
+		}
+		trimmedArray.push(rowArray);
+	}
+
+	console.log(trimmedArray);
+	return trimmedArray;
+}
+
+ReorderCSV.prototype.deletePressed = function(event){
+	console.log("delete pressed",this.reorderedArray);
+	this.deleteColumns(this.reorderedArray);
 }
 
 ReorderCSV.prototype.reorderColumns = function(commaSplitArr){
@@ -131,7 +160,7 @@ ReorderCSV.prototype.reorderColumns = function(commaSplitArr){
 		let rowArray = commaSplitArr[i];
 		
 		if(i !== 0){
-			let newItemCode = this.fixItemCodes(rowArray[0],rowArray[5]);
+			let newItemCode = this.fixItemCodesCrye(rowArray[0],rowArray[5]);
 
 			//k = columns
 			for(let k = 0;k < commaSplitArr[i].length; k++){
@@ -209,7 +238,7 @@ ReorderCSV.prototype.fileDropped = function(event){
 }
 
 function initCSVReorder(){
-	let converter = new ReorderCSV("inputFile","drop_zone","testData");
+	let converter = new ReorderCSV("inputFile","drop_zone","testData","deleteData");
 }
 
 window.onload = initCSVReorder;

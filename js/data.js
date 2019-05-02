@@ -76,3 +76,54 @@ let variantProductMap = {
 	//swivel size => size
 	90:91
 };
+
+let removeColumnsMap = {
+	//remove armor panels
+	14:14,
+	//remove blue water assemblies
+	16:16,
+	//remove brand
+	17:17,
+	//remove cmca assemblies
+	19:19,
+	//remove cmca assemblies 1
+	20:20,
+	//remove category
+	21:21,
+	//remove commodity
+	28:28,
+	//remove custom fab assembly
+	30:30,
+	//remove dynatec sling
+	32:32,
+	//remove dyneema sling
+	33:33,
+	//remove item autopack
+	40:40,
+	//remove larygoscope blades
+	47:47,
+	//remove left eye dominant retention
+	48:48,
+	//remove metric cm size list
+	52:52,
+	//remove metric sizes
+	53:53,
+	//remove microwallnut
+	54:54,
+	//remove option list
+	60:60,
+	//remove patch orientation
+	66:66,
+	//remove patch type
+	67:67,
+	//remove peenut
+	68:68,
+	//remove wty kit item
+	72:72,
+	//remove traumedic assembly
+	84:84,
+	//remove upc code
+	85:85,
+	//remove ml
+	90:90,
+}
